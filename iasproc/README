@@ -1,0 +1,52 @@
+
+==========================================================================================================================
+
+Files in this folder:
+
+1. iasproc.c
+Runs the stored program from givem offset. The sequence is fetch, decode and execute.
+2. iasproc.h
+Data structures with bit fields and packed alignment to avoid padding, so that read and write is compact.
+Defines the processor structures.
+3. storprog.c
+Defines helper function to allow user to load given program in processor memory.
+4. storprog.h
+Header with function prototype for helper function in (3).
+5. utils.c
+Defines debug functions for printing memory contents as just data or instruction content.
+6. utils.h
+Header with function prototypes for helper functions in (5).
+7. main.c
+Executes sequence of loading program (currently hardcoded), and running program using (3) and (1) respectively.
+
+==========================================================================================================================
+
+Compilation:
+
+$ gcc -Wall -o iasproc iasproc.c storprog.c utils.c main.c
+
+==========================================================================================================================
+
+Demo of currently hardcoded program that doubles the memory contents are memory[1024] and loads it to memory[1025]:
+
+$ ./iasproc 
+Instruction area:
+[05][40][01][40][00]
+[00][00][02][14][01]
+[00][00][00][00][00]
+Data area:
+[02][BB][CC][DD][EE]
+[00][00][00][00][00]
+MBR [540014000]
+IR [5]
+MAR [400]
+IBR [14000]
+MBR [21401]
+IR [0]
+Data:
+[05][77][99][BB][DC]
+Next program offset is [120]
+$
+
+==========================================================================================================================
+
