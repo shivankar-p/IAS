@@ -4,13 +4,10 @@
 #define __IASPROC_H
 
 #include <stdio.h>
+#include <stdint.h>
 #include <string.h>
 
-#define NOP 0
-#define LINSTR 1
-#define RINSTR 2
-#define INSTR 3
-
+// IAS instruction opcodes
 #define LOAD_MX 0x01                   // 00000001
 #define LOAD_NegMX 0x02                // 00000010
 #define LOAD_AbsMX 0x03                // 00000011
@@ -33,10 +30,12 @@
 #define RSH 0x15                       // 00010101
 #define STOR_MX 0x21                   // 00100001
 
+// Convenience typedefs
 typedef unsigned char bits8;
 typedef unsigned short bits16;
 typedef unsigned int bits32;
 typedef unsigned long int bits64;
+typedef unsigned __int128 bits128;
 // 40 bits data type
 typedef struct _bits40 {
     bits64 __attribute__((__packed__)) content : 40;
@@ -74,7 +73,8 @@ typedef struct _IAS {
     bits8 memory[20480];
 } IAS;
 
-void run_test_program(IAS *ias, bits16 progoff);
+bits16 fetch_instruction(IAS *ias, bits16 progoff);
+void decode_and_execute(IAS *ias, bits8 opcode, bits16 addr, bits16 *nxtoff);
 
 #endif // __IASPROC_H
 

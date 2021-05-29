@@ -4,20 +4,30 @@
 Files in this folder:
 
 1. iasproc.c
-Runs the stored program from givem offset. The sequence is fetch, decode and execute.
+Runs the stored program from given offset. The sequence is fetch, decode and execute.
+1.1 Function fetch_instruction:
+    If right instruction from previous fetch exists (IBR) then sets IR and MAR from IBR.
+    Else fetches next instructions from memory pointed to by PC using MBR set to M[MAR] and updates PC to PC+40
+    and sets the instruction registers IR and MAR for left instruction (if any) and IBR for right instruction.
+1.2 Function decode_and_execute:
+    Determines the opcode of instruction and invokes appropriate code for the same.
 2. iasproc.h
-Data structures with bit fields and packed alignment to avoid padding, so that read and write is compact.
-Defines the processor structures.
+    Conatins data structures with bit fields and packed alignment to avoid padding, so that read and write is compact.
+    Defines the processor structures.
 3. storprog.c
-Defines helper function to allow user to load given program in processor memory.
+    Defines helper function to allow user to load given program in processor memory.
 4. storprog.h
-Header with function prototype for helper function in (3).
+    Header with function prototype for helper function in (3).
 5. utils.c
-Defines debug functions for printing memory contents as just data or instruction content.
+    Defines print_data function for printing memory contents (40 bits) at given location.
 6. utils.h
-Header with function prototypes for helper functions in (5).
+    Header with function prototypes for helper functions in (5).
 7. main.c
-Executes sequence of loading program (currently hardcoded), and running program using (3) and (1) respectively.
+Takes input as test program file name, if none provided default test program file program1 is used.
+It loads given program and executes it using (3) and (1) respectively.
+8. program1 (double given num ber) and program2 (multiplication of two numbers)
+These are test programs. See the demo executions below.
+
 
 ==========================================================================================================================
 
@@ -27,26 +37,94 @@ $ gcc -Wall -o iasproc iasproc.c storprog.c utils.c main.c
 
 ==========================================================================================================================
 
-Demo of currently hardcoded program that doubles the memory contents are memory[1024] and loads it to memory[1025]:
+Demo:
+=====
 
-$ ./iasproc 
-Instruction area:
-[05][40][01][40][00]
-[00][00][02][14][01]
-[00][00][00][00][00]
-Data area:
-[02][BB][CC][DD][EE]
-[00][00][00][00][00]
-MBR [540014000]
-IR [5]
-MAR [400]
-IBR [14000]
-MBR [21401]
-IR [0]
-Data:
-[05][77][99][BB][DC]
-Next program offset is [120]
+1. Contents of program1:
+------------------------
+
+$ cat program1
+;MEMORY[1024]=02BBCCDDEE
+LOC 1024 DATA 02BBCCDDEE
+;LOAD M(1024)
+;LSH
+0140014000
+;STOR M(1035)
+000002140B
+;HALT
+
+
+2. Executing program1:
+----------------------
+
+$ ./iasproc program1
+Loading program program1:
+
+;MEMORY[1024]=02BBCCDDEE
+LOC 1024 DATA 02BBCCDDEE
+;LOAD M(1024)
+;LSH
+;STOR M(1035)
+;HALT
+
+Executing program program1 ... 
+
+Result:
+
+Memory content at offsets 1035 to 1044:
+M[1035]: 057799BBDC
+M[1036]: 0000000000
+M[1037]: 0000000000
+M[1038]: 0000000000
+M[1039]: 0000000000
+M[1040]: 0000000000
+M[1041]: 0000000000
+M[1042]: 0000000000
+M[1043]: 0000000000
+M[1044]: 0000000000
 $
+
+3. To store result in output file:
+----------------------------------
+
+$ ./iasproc program1 > program1.output
+
+4. To view content of the output file:
+--------------------------------------
+
+$ cat program1.output 
+Loading program program1:
+
+;MEMORY[1024]=02BBCCDDEE
+LOC 1024 DATA 02BBCCDDEE
+;LOAD M(1024)
+;LSH
+;STOR M(1035)
+;HALT
+
+Executing program program1 ... 
+
+Result:
+
+Memory content at offsets 1035 to 1044:
+M[1035]: 057799BBDC
+M[1036]: 0000000000
+M[1037]: 0000000000
+M[1038]: 0000000000
+M[1039]: 0000000000
+M[1040]: 0000000000
+M[1041]: 0000000000
+M[1042]: 0000000000
+M[1043]: 0000000000
+M[1044]: 0000000000
+$
+
+==========================================================================================================================
+
+Team:
+
+1. Aniruddha Chaudhari (Roll no: IMT2020025)
+2. Shivankar Pilligundla (Roll no: IMT2020016)
 
 ==========================================================================================================================
 

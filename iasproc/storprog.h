@@ -5,7 +5,7 @@
 
 #include "iasproc.h"
 
-bits16 store_test_programs(IAS *ias);
+bits16 store_test_programs(IAS *ias, bits16 progoff, bits16 dataoff, char *fname);
 
 #endif // __STORPROG_H
 
